@@ -5,7 +5,15 @@
         <!-- Customize your theme here. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- Window Background -->
-        <item name="android:windowBackground">@color/windowBackground</item>
+        <item name="android:windowBackground">@color/white_primary</item>
+
+        <!-- Text Color -->
+        <item name="android:textColor">@color/redColor</item>
+    </style>
+
+    <!-- Testing my own style -->
+    <style name="ButtStyle" parent="android:Theme.Black.NoTitleBar.Fullscreen">
+        <item name="android:textColor">@color/redColor</item>
     </style>
 
 </resources>
