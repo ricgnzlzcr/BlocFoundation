@@ -25,6 +25,7 @@ import io.bloc.android.blocly.api.model.RssItem;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterViewHolder> {
 
     private static String TAG = ItemAdapter.class.getSimpleName();
+    private static Throwable THROW = new Throwable("Throw baby throw");
 
     // #6
     @Override
@@ -99,6 +100,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                 headerImage.setImageBitmap(loadedImage);
                 headerImage.setVisibility(View.VISIBLE);
             }
+            Log.i(TAG, "onLoadingComplete", THROW);
         }
 
         @Override
