@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 
 import io.bloc.android.blocly.R;
 import io.bloc.android.blocly.ui.adapter.ItemAdapter;
@@ -15,6 +16,7 @@ import io.bloc.android.blocly.ui.adapter.ItemAdapter;
 public class BloclyActivity extends Activity {
 
     private ItemAdapter itemAdapter;
+    private ImageView background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,5 +29,9 @@ public class BloclyActivity extends Activity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(itemAdapter);
+
+        //Set Background
+        background = (ImageView)findViewById(R.id.bg_activity_blocly);
+        background.setImageResource(R.drawable.woods);
     }
 }
