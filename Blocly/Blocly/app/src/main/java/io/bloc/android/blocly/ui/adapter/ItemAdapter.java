@@ -59,6 +59,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         // #6
         RssItem rssItem;;
 
+        //Ric's checkpoint code
+
+
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
             // #10
