@@ -138,7 +138,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            Log.v(TAG, "Checked changed to: " + isChecked);
+
+            //Ric's code
+            int resID = buttonView.getId();
+            String btnTouched = buttonView.getResources().getResourceEntryName(resID);
+
+            Log.v(TAG, btnTouched + " changed to: " + isChecked);
         }
     }
 
