@@ -9,6 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 
 import io.bloc.android.blocly.R;
@@ -45,6 +46,10 @@ public class BloclyActivity extends ActionBarActivity {
         // #6
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0);
         drawerLayout.setDrawerListener(drawerToggle);
+
+        //Launch drawer as soon as app loads
+        drawerLayout.openDrawer(Gravity.LEFT);
+
     }
 
     @Override
@@ -66,6 +71,7 @@ public class BloclyActivity extends ActionBarActivity {
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 }

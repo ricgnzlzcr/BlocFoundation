@@ -17,7 +17,10 @@
     </style>
 
     <style name="DrawerArrow" parent="Base.Widget.AppCompat.DrawerArrowToggle">
-        <item name="color">@color/actionBarItems</item>
+        <item name="color">#FC00DB</item>
+        <item name="gapBetweenBars">7dp</item>
+        <item name="thickness">5dp</item>
+
     </style>
 
     <style name="Headline">
