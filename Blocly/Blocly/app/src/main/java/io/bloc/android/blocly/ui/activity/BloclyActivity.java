@@ -10,6 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import io.bloc.android.blocly.R;
@@ -20,7 +23,7 @@ import io.bloc.android.blocly.ui.adapter.NavigationDrawerAdapter;
 /**
  * Created by ricardo on 5/18/15.
  */
-public class BloclyActivity extends ActionBarActivity implements NavigationDrawerAdapter.NavigationDrawerAdapterDelegate {
+public class BloclyActivity extends ActionBarActivity implements NavigationDrawerAdapter.NavigationDrawerAdapterDelegate, ItemAdapter.ItemAdapterDelegate {
 
     private ItemAdapter itemAdapter;
 
@@ -37,6 +40,7 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
         setSupportActionBar(toolbar);
 
         itemAdapter = new ItemAdapter();
+        itemAdapter.setDelegate(this);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
         // #12
@@ -96,5 +100,35 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
         // #3b
         drawerLayout.closeDrawers();
         Toast.makeText(this, "Show RSS items from " + rssFeed.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    /*
+    * ItemAdapterDelegate Methods
+     */
+
+    @Override
+    public void didUserExpandContent(ItemAdapter adapter, boolean contentExpanded) {
+        Toast.makeText(this.getBaseContext(), "Content expanded", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void didUserContractContent(ItemAdapter adapter, boolean contentExpanded) {
+        Toast.makeText(this.getBaseContext(), "Content contracted", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void didUserVisitSite(ItemAdapter adapter, TextView visitSite) {
+        View v = (View)visitSite;
+        Toast.makeText(v.getContext(), "Visit Site!!!!!" , Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void didUserFavoriteItem(ItemAdapter adapter, CheckBox favoriteCheckbox) {
+        Toast.makeText(this.getBaseContext(), "Favorite checked...awesome", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void didUserArchiveItem(ItemAdapter adapter, CheckBox archiveCheckbox) {
+        Toast.makeText(this.getBaseContext(), "Archived checked...gnarly", Toast.LENGTH_SHORT).show();
     }
 }

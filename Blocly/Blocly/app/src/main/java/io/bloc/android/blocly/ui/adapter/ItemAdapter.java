@@ -12,11 +12,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+
+import java.lang.ref.WeakReference;
 
 import io.bloc.android.blocly.BloclyApplication;
 import io.bloc.android.blocly.R;
@@ -30,6 +31,25 @@ import io.bloc.android.blocly.api.model.RssItem;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterViewHolder> {
 
     private static String TAG = ItemAdapter.class.getSimpleName();
+
+    public static interface ItemAdapterDelegate {
+        public void didUserExpandContent(ItemAdapter adapter, boolean contentExpanded);
+        public void didUserContractContent(ItemAdapter adapter, boolean contentExpanded);
+        public void didUserVisitSite(ItemAdapter adapter, TextView visitSite);
+        public void didUserFavoriteItem(ItemAdapter adapter, CheckBox favoriteCheckbox);
+        public void didUserArchiveItem(ItemAdapter adapter, CheckBox archiveCheckbox);
+    }
+
+    WeakReference<ItemAdapterDelegate> delegate;
+
+    public ItemAdapterDelegate getDelegate() {
+        if (delegate == null) return null;
+        return delegate.get();
+    }
+
+    public void setDelegate(ItemAdapterDelegate delegate) {
+        this.delegate = new WeakReference<ItemAdapterDelegate>(delegate);
+    }
 
     // #6
     @Override
@@ -142,8 +162,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         public void onClick(View view) {
             if (view == itemView) {
                 animateContent(!contentExpanded);
+
+                //Ric's code
+                if (contentExpanded) {
+                    getDelegate().didUserExpandContent(ItemAdapter.this, contentExpanded);
+                } else {
+                    getDelegate().didUserContractContent(ItemAdapter.this, contentExpanded);
+                }
             } else {
-                Toast.makeText(view.getContext(), "Visit " + rssItem.getUrl(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(view.getContext(), "Visit " + rssItem.getUrl(), Toast.LENGTH_SHORT).show();
+                getDelegate().didUserVisitSite(ItemAdapter.this, (TextView) view);
             }
         }
 
@@ -154,6 +182,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             Log.v(TAG, "Checked changed to: " + isChecked);
+            if (buttonView == favoriteCheckbox) {
+                CheckBox btn = (CheckBox) buttonView;
+                getDelegate().didUserFavoriteItem(ItemAdapter.this, btn);
+                Log.v(TAG, "Favorite works!");
+            } else if (buttonView == archiveCheckbox) {
+                CheckBox btn = (CheckBox) buttonView;
+                getDelegate().didUserArchiveItem(ItemAdapter.this, btn);
+                Log.v(TAG, "Archive Works");
+            } else {
+                Log.v(TAG, "No checkmark worked");
+            }
         }
 
 
