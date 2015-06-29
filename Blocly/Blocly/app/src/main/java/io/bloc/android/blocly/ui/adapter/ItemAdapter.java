@@ -120,7 +120,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         TextView expandedContent;
         TextView visitSite;
         // #6
-        RssItem rssItem;;
+        RssItem rssItem;
+        View rv;
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
@@ -135,6 +136,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             expandedContentWrapper = itemView.findViewById(R.id.ll_rss_item_expanded_content_wrapper);
             expandedContent = (TextView) expandedContentWrapper.findViewById(R.id.tv_rss_item_content_full);
             visitSite = (TextView) expandedContentWrapper.findViewById(R.id.tv_rss_item_visit_site);
+            rv = itemView;
 
             itemView.setOnClickListener(this);
             visitSite.setOnClickListener(this);
@@ -237,6 +239,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                         ViewGroup.LayoutParams.WRAP_CONTENT
                 );
                 finalHeight = expandedContentWrapper.getMeasuredHeight();
+
+                //Ric's code
             } else {
                 content.setVisibility(View.VISIBLE);
             }

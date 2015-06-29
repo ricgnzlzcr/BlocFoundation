@@ -214,6 +214,9 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
     public void onItemClicked(ItemAdapter itemAdapter, RssItem rssItem) {
         int positionToExpand = -1;
         int positionToContract = -1;
+
+        RecyclerView rv = (RecyclerView)findViewById(R.id.rv_activity_blocly);
+
         // #3
         if (itemAdapter.getExpandedItem() != null) {
             positionToContract = BloclyApplication.getSharedDataSource().getItems().indexOf(itemAdapter.getExpandedItem());
@@ -222,7 +225,10 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
         if (itemAdapter.getExpandedItem() != rssItem) {
             positionToExpand = BloclyApplication.getSharedDataSource().getItems().indexOf(rssItem);
             itemAdapter.setExpandedItem(rssItem);
+
+            rv.scrollToPosition(positionToExpand);
         } else {
+
             itemAdapter.setExpandedItem(null);
         }
         if (positionToContract > -1) {
