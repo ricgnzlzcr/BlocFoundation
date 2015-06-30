@@ -1,5 +1,7 @@
 package io.bloc.android.blocly.ui.activity;
 
+import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -75,7 +78,10 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
                 }
                 for (int i = 0; i < menu.size(); i++) {
                     MenuItem item = menu.getItem(i);
-                    // #7d
+                    if (item.getItemId() == R.id.action_share
+                            && itemAdapter.getExpandedItem() == null) {
+                        continue;
+                    }
                     item.setEnabled(true);
                     Drawable icon = item.getIcon();
                     if (icon != null) {
@@ -122,6 +128,10 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
                 }
                 for (int i = 0; i < menu.size(); i++) {
                     MenuItem item = menu.getItem(i);
+                    if (item.getItemId() == R.id.action_share
+                            && itemAdapter.getExpandedItem() == null) {
+                        continue;
+                    }
                     Drawable icon = item.getIcon();
                     if (icon != null) {
                         // #9b
@@ -159,7 +169,25 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+        if (item.getItemId() == R.id.action_share) {
+            RssItem itemToShare = itemAdapter.getExpandedItem();
+            if (itemToShare == null) {
+                return false;
+            }
+            // #4
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            // #5
+            shareIntent.putExtra(Intent.EXTRA_TEXT,
+                    String.format("%s (%s)", itemToShare.getTitle(), itemToShare.getUrl()));
+            // #6
+            shareIntent.setType("text/plain");
+            // #7
+            Intent chooser = Intent.createChooser(shareIntent, getString(R.string.share_chooser_title));
+            // #8
+            startActivity(chooser);
+        } else {
+            Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -167,6 +195,7 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.blocly, menu);
         this.menu = menu;
+        animateShareItem(itemAdapter.getExpandedItem() != null);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -224,7 +253,7 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
                 positionToContract = -1;
             }
         }
-        // #4
+
         if (itemAdapter.getExpandedItem() != rssItem) {
             positionToExpand = BloclyApplication.getSharedDataSource().getItems().indexOf(rssItem);
             itemAdapter.setExpandedItem(rssItem);
@@ -232,14 +261,13 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
             itemAdapter.setExpandedItem(null);
         }
         if (positionToContract > -1) {
-            // #5a
             itemAdapter.notifyItemChanged(positionToContract);
         }
         if (positionToExpand > -1) {
-            // #5b
             itemAdapter.notifyItemChanged(positionToExpand);
+            animateShareItem(true);
         } else {
-            // #1
+            animateShareItem(false);
             return;
         }
 
@@ -249,7 +277,30 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
         }
 
         View viewToExpand = recyclerView.getLayoutManager().findViewByPosition(positionToExpand);
-        // #3
+
         recyclerView.smoothScrollBy(0, viewToExpand.getTop() - lessToScroll);
+    }
+
+    /*
+      * Private methods
+      */
+
+    private void animateShareItem(final boolean enabled) {
+        MenuItem shareItem = menu.findItem(R.id.action_share);
+        if (shareItem.isEnabled() == enabled) {
+            return;
+        }
+        shareItem.setEnabled(enabled);
+        final Drawable shareIcon = shareItem.getIcon();
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(enabled ? new int[]{0, 255} : new int[]{255, 0});
+        valueAnimator.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
+        valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                shareIcon.setAlpha((Integer) animation.getAnimatedValue());
+            }
+        });
+        valueAnimator.start();
     }
 }
