@@ -31,6 +31,7 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
         ItemAdapter.DataSource,
         ItemAdapter.Delegate {
 
+    private RecyclerView recyclerView;
     private ItemAdapter itemAdapter;
 
     private ActionBarDrawerToggle drawerToggle;
@@ -51,7 +52,7 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
         itemAdapter.setDataSource(this);
         itemAdapter.setDelegate(this);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
         // #12
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -217,6 +218,11 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
         // #3
         if (itemAdapter.getExpandedItem() != null) {
             positionToContract = BloclyApplication.getSharedDataSource().getItems().indexOf(itemAdapter.getExpandedItem());
+
+            View viewToContract = recyclerView.getLayoutManager().findViewByPosition(positionToContract);
+            if (viewToContract == null) {
+                positionToContract = -1;
+            }
         }
         // #4
         if (itemAdapter.getExpandedItem() != rssItem) {
@@ -232,6 +238,18 @@ public class BloclyActivity extends ActionBarActivity implements NavigationDrawe
         if (positionToExpand > -1) {
             // #5b
             itemAdapter.notifyItemChanged(positionToExpand);
+        } else {
+            // #1
+            return;
         }
+
+        int lessToScroll = 0;
+        if (positionToContract > -1 && positionToContract < positionToExpand) {
+            lessToScroll = itemAdapter.getExpandedItemHeight() - itemAdapter.getCollapsedItemHeight();
+        }
+
+        View viewToExpand = recyclerView.getLayoutManager().findViewByPosition(positionToExpand);
+        // #3
+        recyclerView.smoothScrollBy(0, viewToExpand.getTop() - lessToScroll);
     }
 }
